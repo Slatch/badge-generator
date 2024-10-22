@@ -22,7 +22,9 @@ runs:
     - name: Set up PHP
       uses: shivammathur/setup-php@v2
       env:
+        runner: self-hosted
         PHP_VERSION: ${{ inputs.php-version }}
+        tools: composer, phpunit
       with:
         php-version: $PHP_VERSION
         coverage: xdebug
