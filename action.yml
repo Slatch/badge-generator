@@ -28,13 +28,39 @@ runs:
       shell: bash
       run: npm install -g badge-maker
 
+    - name: Transform percentage
+      id: transform_percentage
+      shell: bash
+      env:
+        PERCENTAGE: ${{ inputs.percentage }}
+      run: |
+        echo "percentage=$(echo "$PERCENTAGE" | grep -o -E '[0-9]+')" >> $GITHUB_OUTPUT
+
+# colors: https://www.npmjs.com/package/badge-maker
+    - name: Determine color
+      id: determine_color
+      shell: bash
+      env:
+        TRANSFORMED_PERCENTAGE: ${{ steps.transform_percentage.outputs.percentage }}
+      run: |
+        if [ $TRANSFORMED_PERCENTAGE > 90 ] then
+          color = "green"
+        elif [ $TRANSFORMED_PERCENTAGE > 80 ]
+          color = "yellowgreen"
+        elif [ $TRANSFORMED_PERCENTAGE > 65 ]
+          color = "orange"
+        else
+          color = "inactive"
+        fi
+        echo "color=${color}" >> $GITHUB_OUTPUT
+
     - name: Generate badge
       id: badge-generator
       shell: bash
       env:
         TITLE: ${{ inputs.title }}
         PERCENTAGE: ${{ inputs.percentage }}
-        COLOR: ${{ inputs.color }}
+        COLOR: ${{ steps.determine_color.outputs.color }}
       run: |
         npx badge-maker "$TITLE" "$PERCENTAGE" "$COLOR" > badge.svg
         echo "badge-path=$(realpath badge.svg)" >> $GITHUB_OUTPUT
