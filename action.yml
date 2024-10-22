@@ -44,7 +44,6 @@ runs:
       run: |
         COVERAGE_PERCENTAGE=$(head coverage.txt | awk '/Lines:/ {print $2}')
         echo "::set-output name=coverage::${COVERAGE_PERCENTAGE}"
-#        echo "{coverage}=${COVERAGE_PERCENTAGE}" >> $GITHUB_OUTPUT
         rm coverage.txt
 
     - name: Install Badge Generator
