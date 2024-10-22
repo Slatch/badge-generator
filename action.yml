@@ -46,6 +46,7 @@ runs:
         rm coverage.txt
 
     - name: Install Badge Generator
+      shell: bash
       run: npm install -g badge-maker
 
     - name: Generate badge
