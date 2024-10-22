@@ -6,17 +6,13 @@ branding:
   color: "white"
 inputs:
   percentage:
-    descrpition: Badge percentage from 0 to 100
+    descrpition: Badge percentage from 0.00% to 100.00%
     required: true
-    default: 0%
+    default: 0.00%
   title:
     descrpition: Badge title
     required: false
     default: Coverage
-  color:
-    description: Badge color
-    required: false
-    default: green
 outputs:
   badge-path:
     description: Generated badge path
@@ -34,7 +30,7 @@ runs:
       env:
         PERCENTAGE: ${{ inputs.percentage }}
       run: |
-        echo "percentage=$(echo "$PERCENTAGE" | grep -o -E '[0-9]+')" >> $GITHUB_OUTPUT
+        echo "percentage=$(echo "$PERCENTAGE" | awk -F'[^0-9]+' '{ print $1 }'" >> $GITHUB_OUTPUT
 
 # colors: https://www.npmjs.com/package/badge-maker
     - name: Determine color
@@ -43,11 +39,11 @@ runs:
       env:
         TRANSFORMED_PERCENTAGE: ${{ steps.transform_percentage.outputs.percentage }}
       run: |
-        if [ $TRANSFORMED_PERCENTAGE > 90 ] ; then
+        if [ $TRANSFORMED_PERCENTAGE -ge 90 ] ; then
           echo "color=green" >> $GITHUB_OUTPUT
-        elif [ $TRANSFORMED_PERCENTAGE > 80 ] ; then
+        elif [ $TRANSFORMED_PERCENTAGE -ge 80 ] ; then
           echo "color=yellowgreen" >> $GITHUB_OUTPUT
-        elif [ $TRANSFORMED_PERCENTAGE > 65 ] ; then
+        elif [ $TRANSFORMED_PERCENTAGE -ge 65 ] ; then
           echo "color=orange" >> $GITHUB_OUTPUT
         else
           echo "color=inactive" >> $GITHUB_OUTPUT
