@@ -1,6 +1,6 @@
 name: "Badge generator"
 author: "Andrii Leonov"
-description: "Generates code coverage badge for phpunit"
+description: "Generates badge image and return path to it"
 branding:
   icon: "git-branch"
   color: "white"
@@ -18,8 +18,8 @@ inputs:
     required: false
     default: green
 outputs:
-  badge:
-    description: Generated badge
+  badge-path:
+    description: Generated badge path
     value: ${{ steps.badge-generator.outputs.badge-path }}
 runs:
   using: "composite"
