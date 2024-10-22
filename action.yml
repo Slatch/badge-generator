@@ -1,78 +1,40 @@
-name: "Code coverage generator"
+name: "Badge generator"
 author: "Andrii Leonov"
 description: "Generates code coverage badge for phpunit"
 branding:
   icon: "git-branch"
   color: "white"
 inputs:
-  email:
-    description: The commiter's email address
+  percentage:
+    descrpition: Badge percentage from 0 to 100
     required: true
-    default: github-actions[bot]@users.noreply.github.com
-  name:
-    description: The commiter's name
-    required: true
-    default: github-actions[bot]
-  php-version:
-    descrpition: PHP version to run
-    default: 8.3
+    default: 0%
+  title:
+    descrpition: Badge title
+    required: false
+    default: Coverage
+  color:
+    description: Badge color
+    required: false
+    default: green
+outputs:
+  badge:
+    description: Generated badge
+    value: ${{ steps.badge-generator.outputs.badge-path }}
 runs:
   using: "composite"
   steps:
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      env:
-        runner: self-hosted
-        tools: composer, phpunit
-      with:
-        php-version: ${{ inputs.php-version }}
-        coverage: xdebug
-
-    - name: Install dependencies
-      shell: bash
-      run: composer install --prefer-dist --no-progress --no-suggest
-
-    - name: Run PHPUnit with coverage
-      shell: bash
-      run: vendor/bin/phpunit  --stop-on-failure --coverage-text=coverage.txt
-      env:
-        XDEBUG_MODE: coverage
-
-    - name: Extract code coverage percentage
-      shell: bash
-      id: extract_coverage
-      run: |
-        COVERAGE_PERCENTAGE=$(head coverage.txt | awk '/Lines:/ {print $2}')
-        echo "::set-output name=coverage::${COVERAGE_PERCENTAGE}"
-        rm coverage.txt
-
     - name: Install Badge Generator
       shell: bash
       run: npm install -g badge-maker
 
     - name: Generate badge
-      shell: bash
-      run: |
-        COVERAGE=${{ steps.extract_coverage.outputs.coverage }}
-        npx badge-maker 'Coverage' "${COVERAGE}" 'green' > badge.svg
-
-    - name: Check diff
-      shell: bash
-      id: check_diff
-      run: |
-        git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
-
-    - name: Push badge
+      id: badge-generator
       shell: bash
       env:
-        NAME: ${{ inputs.email }}
-        EMAIL: ${{ inputs.email }}
-#      if: steps.check_diff.outputs.changed == 'true'
+        TITLE: ${{ inputs.title }}
+        PERCENTAGE: ${{ inputs.percentage }}
+        COLOR: ${{ inputs.color }}
       run: |
-        git config --local user.name "$NAME"
-        git config --local user.email "$EMAIL"
-        git fetch --all
-        git checkout ${{ github.head_ref || github.ref_name }}
-        git add badge.svg
-        git commit -m "Add coverage badge"
-        git push --set-upstream origin ${{ github.head_ref || github.ref_name }}
+        npx badge-maker "$TITLE" "$PERCENTAGE" "$COLOR" > badge.svg
+        echo "badge-path=$(realpath badge.svg)" >> $GITHUB_OUTPUT
