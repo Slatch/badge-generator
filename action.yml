@@ -30,7 +30,7 @@ runs:
       env:
         PERCENTAGE: ${{ inputs.percentage }}
       run: |
-        echo "percentage=$(echo "$PERCENTAGE" | awk -F'[^0-9]+' '{ print $1 }'" >> $GITHUB_OUTPUT
+        echo "percentage=$(echo '$PERCENTAGE' | awk -F'[^0-9]+' '{ print $1 }'" >> $GITHUB_OUTPUT
 
 # colors: https://www.npmjs.com/package/badge-maker
     - name: Determine color
