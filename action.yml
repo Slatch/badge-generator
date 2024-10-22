@@ -43,7 +43,7 @@ runs:
       id: extract_coverage
       run: |
         COVERAGE_PERCENTAGE=$(head coverage.txt | awk '/Lines:/ {print $2}')
-        echo "::set-output name=coverage::${COVERAGE_PERCENTAGE}"
+        echo "{coverage}=${COVERAGE_PERCENTAGE}" >> $GITHUB_OUTPUT
         rm coverage.txt
 
     - name: Install Badge Generator
@@ -67,7 +67,7 @@ runs:
       env:
         NAME: ${{ inputs.email }}
         EMAIL: ${{ inputs.email }}
-      if: steps.check_diff.outputs.changed == 'true'
+#      if: steps.check_diff.outputs.changed == 'true'
       run: |
         git config --local user.name "$NAME"
         git config --local user.email "$EMAIL"
