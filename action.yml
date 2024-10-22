@@ -44,15 +44,14 @@ runs:
         TRANSFORMED_PERCENTAGE: ${{ steps.transform_percentage.outputs.percentage }}
       run: |
         if [ $TRANSFORMED_PERCENTAGE > 90 ] ; then
-          color = "green"
+          echo "color=green" >> $GITHUB_OUTPUT
         elif [ $TRANSFORMED_PERCENTAGE > 80 ] ; then
-          color = "yellowgreen"
+          echo "color=yellowgreen" >> $GITHUB_OUTPUT
         elif [ $TRANSFORMED_PERCENTAGE > 65 ] ; then
-          color = "orange"
+          echo "color=orange" >> $GITHUB_OUTPUT
         else
-          color = "inactive"
+          echo "color=inactive" >> $GITHUB_OUTPUT
         fi
-        echo "color=${color}" >> $GITHUB_OUTPUT
 
     - name: Generate badge
       id: badge-generator
