@@ -43,11 +43,11 @@ runs:
       env:
         TRANSFORMED_PERCENTAGE: ${{ steps.transform_percentage.outputs.percentage }}
       run: |
-        if [ $TRANSFORMED_PERCENTAGE > 90 ] then
+        if [ $TRANSFORMED_PERCENTAGE > 90 ] ; then
           color = "green"
-        elif [ $TRANSFORMED_PERCENTAGE > 80 ]
+        elif [ $TRANSFORMED_PERCENTAGE > 80 ] ; then
           color = "yellowgreen"
-        elif [ $TRANSFORMED_PERCENTAGE > 65 ]
+        elif [ $TRANSFORMED_PERCENTAGE > 65 ] ; then
           color = "orange"
         else
           color = "inactive"
